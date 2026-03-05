@@ -6,7 +6,8 @@
 	// so be sure that the "next" Node is linked to a nullptr
 Node::Node(string s) 
 {
-
+	data = s;
+	next = nullptr;
 }
 
 //constructor : initiazlize the head and tail field from LLStack class 
@@ -14,7 +15,9 @@ Node::Node(string s)
 	// the head and tail should both be initialized as null pointers
 LLStack::LLStack()
 {
-
+head = nullptr;
+tail = nullptr;
+count = 0;
 }
 
 /*
@@ -24,7 +27,12 @@ LLStack::LLStack()
 */
 string LLStack::top()
 {
-	return "fixthis";
+	if (head == nullptr){
+		return "";
+	} else {
+		return head->data;
+	}
+	
 }
 
 /*
@@ -32,7 +40,7 @@ string LLStack::top()
 */
 int LLStack::size()
 {
-	return -1;
+	return count;
 }
 
 /*
@@ -43,9 +51,22 @@ int LLStack::size()
 	1. If there is no element in the stack and this is the first one going to the stack
 	2. If there is another head in the stack
 */
-void LLStack::push(string s)
-{
+void LLStack::push(string s){
+	if (tail == nullptr && head == nullptr){
+Node* nodeNew = new Node(s);
+nodeNew->next = tail;
+tail = nodeNew;
 
+nodeNew->next = head;
+head = nodeNew;
+
+count++;
+}else if (head != nullptr){
+Node* nodeNew = new Node(s);
+nodeNew->next = head;
+head = nodeNew;
+count++;
+}
 }
 
 /*
@@ -57,7 +78,18 @@ void LLStack::push(string s)
 */
 void LLStack::pop()
 {
-
+if (count != 0 && count >= 2){
+	Node *temp = head;
+	head = head->next;
+	delete temp;
+	count--;
+} else if (count == 1){
+Node *temp = tail;
+	tail = tail->next;
+	delete temp;
+	head = nullptr;
+	count--;
+}
 }
 
 /*
@@ -82,6 +114,37 @@ void LLStack::pop()
 */
 int LLStack::removeAll(const string& target) 
 {
-	return -1;
+	int removed = 0;
+	bool found = false;
+	int i = count;
+	Node* nodeDel = nullptr;
+	Node* current = head;
+	Node* prev = nullptr;
+	if(head == nullptr && tail == nullptr) {return -1;}
+	while(current != nullptr){
+		if (head->data == target){
+			nodeDel = head;
+			head = head->next;
+			delete nodeDel;
+			current = head;
+			count--;
+			removed++;
+			found = true;
+		}else if (current->data == target){
+			prev->next = current->next;
+			nodeDel = current;
+			current = current->next;
+			delete nodeDel;
+			count--;
+			removed++;
+			found = true;
+		} else {prev = current; current = current->next;}
+
+		if (head == nullptr) {tail = nullptr;}
+	}
+
+	if (found == false){return 0;} 
+	else if (head == nullptr && tail == nullptr && found == true) {cout << "List Emptied!"; return removed;}
+	else {return removed;}
 }
 
